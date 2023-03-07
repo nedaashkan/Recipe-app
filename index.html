@@ -1,24 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <script
-      src="https://kit.fontawesome.com/cb6c074b0b.js"
-      crossorigin="anonymous"
-    ></script>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Recipe App</title>
     <link rel="stylesheet" href="./css/style.css" />
+    <script
+      src="https://kit.fontawesome.com/cb6c074b0b.js"
+      crossorigin="anonymous"
+    ></script>
   </head>
   <body>
     <div class="mobile-container">
-      <header>
-        <input type="text" />
-        <button id="seaarch">
+      <form id="search-form">
+        <input
+          type="text"
+          placeholder="Search a recipe . . ."
+          autofocus="on"
+          autocomplete="off"
+          id="input-el"
+        />
+        <button type="submit" id="seaarch" id="button-el">
           <i class="fa-solid fa-magnifying-glass"></i>
         </button>
-      </header>
+      </form>
 
       <div class="fav-container">
         <h3>favorite Meals</h3>
