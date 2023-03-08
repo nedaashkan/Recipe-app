@@ -10,24 +10,22 @@ function searchButton(event) {
   console.log(mealName);
 }
 
+// let UrlRandomMeal = `https://www.themealdb.com/api/json/v1/1/random.php`;
+// axios.get(UrlRandomMeal).then(getRandomMeal);
 
-// async function getRandomMeal() {
-//   const resp = await fetch(`www.themealdb.com/api/json/v1/1/random.php`);
-//   const randomMeal = await resp.json();
-//   console.log(randomMeal);
+// function getRandomMeal(response) {
+//   console.log(response.data);
 // }
-// getRandomMeal();
 
+// let UrlGetMealById = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${mealId}`;
+// axios.get(UrlGetMealById).then(getMealById);
 
-
-
-// async function getMealById() {
-//   const MealById = await fetch(
-//     `www.themealdb.com/api/json/v1/1/lookup.php?i=${mealId}`
-//   );
+// function getMealById(response) {
+//   console.log(response.data);
 // }
-// async function getMealsBySearch() {
-//   const MealsBySearch = await fetch(
-//     `www.themealdb.com/api/json/v1/1/search.php?s=${mealName}`
-//   );
+
+// let UrlGetMealByName = `https://www.themealdb.com/api/json/v1/1/search.php?s=${mealName}`;
+// axios.get(UrlGetMealByName).then(mealByName);
+// function mealByName(response) {
+//   console.log(response.data);
 // }
