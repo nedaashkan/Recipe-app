@@ -194,7 +194,7 @@ function createFevMeal() {
 
 function viewFavMeal(e) {
   let index = e.parentElement.id;
-  favMealsBoxËl.innerHTML = `
+  favMealsBoxEl.innerHTML = `
           <div class="popup-container hidden" id="fav-meal-popup">
             <div class="popup">
               <div class="meal-info" id="meal-info">
