@@ -227,3 +227,8 @@ form button {
   margin-top: 1.5em;
   font-size: 1.6rem;
 }
+#msg {
+  color: red;
+  margin: 0;
+  text-align: center;
+}

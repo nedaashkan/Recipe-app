@@ -26,50 +26,15 @@
           <i class="fa-solid fa-magnifying-glass"></i>
         </button>
       </form>
+      <div id="msg"></div>
 
       <div class="fav-container">
         <h3>favorite Meals</h3>
         <ul class="fav-meals"></ul>
       </div>
 
-      <div class="meals" id="meals-box">
-        <div class="popup-container hidden" id="meal-popup">
-          <div class="popup">
-            <div class="meal-info" id="meal-info">
-              <button id="close-popup" class="close-popup">
-                <i class="fas fa-times"></i>
-              </button>
-
-              <h3 id="mealname" class="meal-name"></h3>
-
-              <div class="img-box">
-                <img id="popup-img" />
-              </div>
-
-              <div class="ingredients-box">
-                <h2>Ingredients</h2>
-                <ul id="ingredients-el"></ul>
-              </div>
-
-              <div class="instructions-box">
-                <h2>instructions</h2>
-                <p id="instructions-el"></p>
-              </div>
-
-              <div class="video-box">
-                <iframe
-                  width="100%"
-                  height="100%"
-                  title="YouTube video player"
-                  frameborder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowfullscreen
-                ></iframe>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div class="meals" id="meals-box"></div>
+      <div class="meals" id="fav-meals-box"></div>
     </div>
     <script src="js/app.js"></script>
   </body>

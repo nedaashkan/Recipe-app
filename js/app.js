@@ -1,28 +1,41 @@
-let input = document.querySelector("#input-el");
 let form = document.querySelector("#search-form");
 let mealsBoxEl = document.getElementById("meals-box");
 let favMealsBox = document.querySelector(".fav-meals");
-form.addEventListener("submit", searchButton);
-let mealName;
-function searchButton(event) {
-  event.preventDefault();
-  let inputValue = input.value;
-  mealName = inputValue.toLowerCase().trim();
-}
+let favMealsBoxEl = document.getElementById("fav-meals-box");
+
 let UrlRandomMeal = `https://www.themealdb.com/api/json/v1/1/random.php`;
-axios.get(UrlRandomMeal).then(getRandomMeal);
+axios.get(UrlRandomMeal).then(getMealRecipe);
 
 let favMealData = [];
 let favMeal = {};
 let purpleHeart = false;
 
-function getRandomMeal(response) {
+form.addEventListener("submit", searchButton);
+function searchButton(event) {
+  event.preventDefault();
+  let input = document.querySelector("#input-el");
+  let inputValue = input.value;
+  let mealName = inputValue.toLowerCase().trim();
+  let msg = document.getElementById("msg");
+  if (mealName === "") {
+    console.log(mealName);
+    msg.textContent = "value not valid";
+  } else {
+    msg.textContent = "";
+    let UrlGetMealByName = `https://www.themealdb.com/api/json/v1/1/search.php?s=${mealName}`;
+    axios.get(UrlGetMealByName).then(getMealRecipe);
+    console.log(mealName);
+  }
+}
+
+function getMealRecipe(response) {
+  let randomMealResponse = response.data.meals[0];
   let ingredients = [];
   for (let i = 1; i <= 20; i++) {
-    if (response.data.meals[0][`strIngredient${i}`]) {
+    if (randomMealResponse[`strIngredient${i}`]) {
       ingredients.push(
-        `${response.data.meals[0][`strIngredient${i}`]} - ${
-          response.data.meals[0][`strMeasure${i}`]
+        `${randomMealResponse[`strIngredient${i}`]} - ${
+          randomMealResponse[`strMeasure${i}`]
         }`
       );
     } else {
@@ -30,25 +43,27 @@ function getRandomMeal(response) {
     }
   }
 
-  favMeal["name"] = response.data.meals[0].strMeal;
-  favMeal["img"] = response.data.meals[0].strMealThumb;
-  favMeal["id"] = response.data.meals[0].idMeal;
-  favMeal["instruction"] = response.data.meals[0].strInstructions;
+  favMeal["name"] = randomMealResponse.strMeal;
+  favMeal["img"] = randomMealResponse.strMealThumb;
+  favMeal["id"] = randomMealResponse.idMeal;
+  favMeal["instruction"] = randomMealResponse.strInstructions;
   favMeal["ingredientText"] = ingredients;
-  favMeal["youtube"] = response.data.meals[0].strYoutube;
+  favMeal["youtube"] = randomMealResponse.strYoutube;
   mealsBoxEl.innerHTML = `
+
+
         <div class="meal">
           <div class="meal-header">
             <span class="random"> random Recipe </span>
             <img
               class="card-img"
-              onclick="viewMeal()"
-              src="${response.data.meals[0].strMealThumb}"
-              alt="${response.data.meals[0].strMeal}"
+              onclick="viewMeal(this)"
+              src="${randomMealResponse.strMealThumb}"
+              alt="${randomMealResponse.strMeal}"
             />
           </div>
           <div class="meal-body">
-            <h4>${response.data.meals[0].strMeal}</h4>
+            <h4>${randomMealResponse.strMeal}</h4>
             <button class="fv-btn">
               <i
                 class="fa-solid fa-heart"
@@ -57,7 +72,66 @@ function getRandomMeal(response) {
               ></i>
             </button>
           </div>
+          <div class="popup-container hidden" id="meal-popup">
+            <div class="popup">
+              <div class="meal-info" id="meal-info">
+                <button
+                  id="close-popup"
+                  class="close-popup"
+                  onclick="closeMeal()"
+                >
+                  <i class="fas fa-times"></i>
+                </button>
+                <h3 id="mealname" class="meal-name">
+                  ${randomMealResponse.strMeal}
+                </h3>
+
+                <div class="img-box">
+                  <img
+                    src="${randomMealResponse.strMealThumb}"
+                    alt="${randomMealResponse.strMeal}"
+                    id="popup-img"
+                  />
+                </div>
+
+                <div class="ingredients-box">
+                  <h2>Ingredients</h2>
+                  <ul id="ingredients-el">
+                    ${ingredients
+                      .map(
+                        (ingredient) => `
+                    <li>${ingredient}</li>
+                    `
+                      )
+                      .join("")}
+                  </ul>
+                </div>
+
+                <div class="instructions-box">
+                  <h2>instructions</h2>
+                  <p id="instructions-el">
+                    ${randomMealResponse.strInstructions}
+                  </p>
+                </div>
+
+                <div class="video-box">
+                  <iframe
+                    width="100%"
+                    height="100%"
+                    src="https://www.youtube.com/embed/${randomMealResponse.strYoutube.slice(
+                      -11
+                    )}"
+                    title="YouTube video player"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen
+                  ></iframe>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+
 `;
 }
 
@@ -69,10 +143,10 @@ function favClick(e) {
     favMealData.push(favMeal);
     localStorage.setItem("data", JSON.stringify(favMealData));
     console.log(favMealData);
+    setTimeout(() => {
+      location.reload();
+    }, 500);
     createFevMeal();
-    // setTimeout(() => {
-    //   location.reload();
-    // }, 6000);
   } else {
     e.classList.remove("active");
     purpleHeart = false;
@@ -110,7 +184,7 @@ function createFevMeal() {
               alt="${x.name}"
               onclick="viewFavMeal(this)"
             /><span>${x.name.slice(0, 8)}</span>
-            <button class="clear" onclick="deleteFavMeal(this)"><i class="fas fa-window-close"></i></button>
+            <button class="clear" onclick="deleteFavMeal(this);createFevMeal()"><i class="fas fa-window-close"></i></button>
           </li>
 
   
@@ -119,30 +193,78 @@ function createFevMeal() {
 }
 
 function viewFavMeal(e) {
-  viewMeal();
   let index = e.parentElement.id;
-  let mealNameEl = document.getElementById("mealname");
-  mealNameEl.textContent = favMealData[index].name;
-  let popupImgEl = document.getElementById("popup-img");
-  popupImgEl.src = favMealData[index].img;
-  // let ingredientsEl = document.getElementById("ingredients-el");
-  // ingredientsEl.textContent = favMealData[index].ingredientText
-  //   .map((ingredient) => ingredient)
-  //   .join("");
-  let instructionsEl = document.getElementById("instructions-el");
-  instructionsEl.textContent = favMealData[index].instruction;
-}
-// function getMealById(response) {
-//   // console.log(response.data.meals[0]);
-//   favMealIdData[0]["recipe"] = response.data.meals[0];
-//   console.log(favMealIdData);
-// }
+  favMealsBoxËl.innerHTML = `
+          <div class="popup-container hidden" id="fav-meal-popup">
+            <div class="popup">
+              <div class="meal-info" id="meal-info">
+                <button
+                  id="close-popup"
+                  class="close-popup"
+                  onclick="closeFavMeal()"
+                >
+                  <i class="fas fa-times"></i>
+                </button>
+                <h3 id="mealname" class="meal-name">
+                  ${favMealData[index].name}
+                </h3>
 
-// // let UrlGetMealByName = `https://www.themealdb.com/api/json/v1/1/search.php?s=${mealName}`;
-// // axios.get(UrlGetMealByName).then(mealByName);
-// // function mealByName(response) {
-// //   console.log(response.data);
-// // }
+                <div class="img-box">
+                  <img
+                    src="${favMealData[index].img}"
+                    alt="${favMealData[index].name}"
+                    id="popup-img"
+                  />
+                </div>
+
+                <div class="ingredients-box">
+                  <h2>Ingredients</h2>
+                  <ul id="ingredients-el">
+                    ${favMealData[index].ingredientText
+                      .map(
+                        (ingredient) => `
+                    <li>${ingredient}</li>
+                    `
+                      )
+                      .join("")}
+                  </ul>
+                </div>
+
+                <div class="instructions-box">
+                  <h2>instructions</h2>
+                  <p id="instructions-el">
+                    ${favMealData[index].instruction}
+                  </p>
+                </div>
+
+                <div class="video-box">
+                  <iframe
+                    width="100%"
+                    height="100%"
+                    src="https://www.youtube.com/embed/${favMealData[
+                      index
+                    ].youtube.slice(-11)}"
+                    title="YouTube video player"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen
+                  ></iframe>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+`;
+  let favMealPopup = document.getElementById("fav-meal-popup");
+  favMealPopup.classList.remove("hidden");
+}
+
+function closeFavMeal() {
+  let favMealPopup = document.getElementById("fav-meal-popup");
+  favMealPopup.classList.add("hidden");
+}
+
 (() => {
   favMealData = JSON.parse(localStorage.getItem("data")) || [];
   createFevMeal();
